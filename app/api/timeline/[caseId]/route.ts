@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {prisma} from '@/lib/prisma';export async function GET(_:Request,{params}:{params:Promise<{caseId:string}>}){const {caseId}=await params;return NextResponse.json(await prisma.timelineEvent.findMany({where:{caseId},orderBy:{timestamp:'asc'}}))}

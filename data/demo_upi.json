@@ -1,0 +1,1 @@
+[{"transaction_id":"TXN-DEMO-001","timestamp":"2026-09-12T10:05:42+05:30","sender_account":"VICTIM","receiver_account":"XX6721","upi_id":"fraud@okaxis","amount":50000,"status":"SUCCESS"},{"transaction_id":"TXN-DEMO-002","timestamp":"2026-09-12T10:08:19+05:30","sender_account":"XX6721","receiver_account":"XX9987","upi_id":"mulea@okaxis","amount":48000,"status":"SUCCESS"}]

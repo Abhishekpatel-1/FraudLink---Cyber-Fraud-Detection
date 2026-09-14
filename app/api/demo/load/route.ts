@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {loadDemo} from '@/lib/demo';export const runtime='nodejs';export async function POST(){try{return NextResponse.json(await loadDemo())}catch(e){console.error(e);return NextResponse.json({error:'Demo load failed. Run `npm run db:push` first.'},{status:500})}}

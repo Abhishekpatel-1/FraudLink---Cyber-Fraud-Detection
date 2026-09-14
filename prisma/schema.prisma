@@ -1,0 +1,228 @@
+generator client {
+provider = "prisma-client-js"
+}
+datasource db {
+provider = "sqlite"
+url = env("DATABASE_URL")
+}
+
+model User {
+id String @id @default(cuid())
+email String @unique
+name String
+role String @default("INVESTIGATOR")
+passwordHash String
+cases Case[]
+evidence EvidenceFile[]
+createdAt DateTime @default(now())
+}
+model Case {
+id String @id
+title String
+description String?
+fraudType String
+victim String?
+incidentDate DateTime?
+status String @default("NEW")
+riskScore Int @default(0)
+riskLevel String @default("LOW")
+investigatorId String?
+investigator User? @relation(fields:[investigatorId], references:[id])
+evidence EvidenceFile[]
+links EntityLink[]
+assessments RiskAssessment[]
+timeline TimelineEvent[]
+notes InvestigationNote[]
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+}
+model EvidenceFile {
+id String @id @default(cuid())
+caseId String
+case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+originalFilename String
+type String
+size Int
+sha256 String
+source String?
+parserVersion String
+status String
+uploadedById String?
+uploadedBy User? @relation(fields:[uploadedById], references:[id])
+storedPath String?
+createdAt DateTime @default(now())
+custody ChainOfCustodyEvent[]
+}
+model Person {
+id String @id @default(cuid())
+name String?
+address String?
+phones Phone[]
+accounts BankAccount[]
+}
+model Phone {
+id String @id @default(cuid())
+number String @unique
+personId String?
+person Person? @relation(fields:[personId], references:[id])
+imeiId String?
+imei IMEI? @relation(fields:[imeiId], references:[id])
+imsiId String?
+imsi IMSI? @relation(fields:[imsiId], references:[id])
+ips IP[]
+}
+model Device {
+id String @id @default(cuid())
+deviceModel String?
+androidId String?
+macId String?
+imeiId String?
+imei IMEI? @relation(fields:[imeiId], references:[id])
+apks APKArtifact[]
+}
+model IMEI {
+id String @id @default(cuid())
+value String @unique
+phones Phone[]
+devices Device[]
+}
+model IMSI {
+id String @id @default(cuid())
+value String @unique
+phones Phone[]
+}
+model IP {
+id String @id @default(cuid())
+value String @unique
+phones Phone[]
+}
+model MAC {
+id String @id @default(cuid())
+value String @unique
+}
+model BankAccount {
+id String @id @default(cuid())
+accountNo String @unique
+personId String?
+person Person? @relation(fields:[personId], references:[id])
+upi UPIAccount[]
+transactionsFrom Transaction[] @relation("fromAccount")
+transactionsTo Transaction[] @relation("toAccount")
+}
+model UPIAccount {
+id String @id @default(cuid())
+handle String @unique
+bankAccountId String?
+bankAccount BankAccount? @relation(fields:[bankAccountId], references:[id])
+transactions Transaction[]
+}
+model Transaction {
+id String @id @default(cuid())
+transactionId String @unique
+timestamp DateTime
+senderAccountId String?
+senderAccount BankAccount? @relation("fromAccount", fields:[senderAccountId], references:[id])
+receiverAccountId String?
+receiverAccount BankAccount? @relation("toAccount", fields:[receiverAccountId], references:[id])
+upiId String?
+upi UPIAccount? @relation(fields:[upiId], references:[id])
+amount Float
+bank String?
+status String?
+}
+model CallRecord {
+id String @id @default(cuid())
+timestamp DateTime
+caller String
+callee String
+duration Int
+imei String?
+imsi String?
+cellId String?
+evidenceId String?
+}
+model EmailRecord {
+id String @id @default(cuid())
+from String
+to String
+subject String?
+date DateTime?
+messageId String?
+received String?
+authenticationResults String?
+sourceIp String?
+evidenceId String?
+}
+model APKArtifact {
+id String @id @default(cuid())
+packageName String
+sha256 String
+permissions String?
+certificate String?
+source String?
+installTime DateTime?
+deviceId String?
+device Device? @relation(fields:[deviceId], references:[id])
+}
+model EntityLink {
+id String @id @default(cuid())
+caseId String
+case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+fromType String
+fromId String
+toType String
+toId String
+relationship String
+confidence Float
+reason String
+sourceFiles String
+createdAt DateTime @default(now())
+}
+model RiskAssessment {
+id String @id @default(cuid())
+caseId String
+case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+score Int
+level String
+factors String
+createdAt DateTime @default(now())
+}
+model TimelineEvent {
+id String @id @default(cuid())
+caseId String
+case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+timestamp DateTime
+category String
+title String
+description String
+evidenceId String?
+}
+model Campaign {
+id String @id @default(cuid())
+name String
+confidence Float
+cases String
+victims Int
+upiHandles Int
+devices Int
+ipRanges Int
+createdAt DateTime @default(now())
+}
+model ChainOfCustodyEvent {
+id String @id @default(cuid())
+evidenceId String
+evidence EvidenceFile @relation(fields:[evidenceId], references:[id], onDelete:Cascade)
+action String
+actor String
+timestamp DateTime @default(now())
+notes String?
+hashAtEvent String?
+}
+model InvestigationNote {
+id String @id @default(cuid())
+caseId String
+case Case @relation(fields:[caseId], references:[id], onDelete:Cascade)
+author String
+body String
+createdAt DateTime @default(now())
+}

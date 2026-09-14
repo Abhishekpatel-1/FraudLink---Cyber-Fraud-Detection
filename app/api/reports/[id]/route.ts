@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {prisma} from '@/lib/prisma';export async function GET(_:Request,{params}:{params:Promise<{id:string}>}){const {id}=await params;const c=await prisma.case.findUnique({where:{id},include:{evidence:true,links:true,timeline:true}});return c?NextResponse.json(c):NextResponse.json({error:'Report case not found'},{status:404})}

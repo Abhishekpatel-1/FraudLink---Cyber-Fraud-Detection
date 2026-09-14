@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {prisma} from '@/lib/prisma';export async function GET(_:Request,{params}:{params:Promise<{evidenceId:string}>}){const {evidenceId}=await params;return NextResponse.json(await prisma.chainOfCustodyEvent.findMany({where:{evidenceId},orderBy:{timestamp:'asc'}}))}

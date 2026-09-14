@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {prisma} from '@/lib/prisma';
+export async function GET(){return NextResponse.json(await prisma.case.findMany({orderBy:{updatedAt:'desc'},include:{investigator:true,_count:{select:{evidence:true,links:true}}}}))}
+export async function POST(req:Request){const b=await req.json();if(!b.id||!b.title||!b.fraudType)return NextResponse.json({error:'id, title and fraudType are required'},{status:400});const c=await prisma.case.create({data:{id:b.id,title:b.title,description:b.description||null,fraudType:b.fraudType,victim:b.victim||null,status:'NEW',riskScore:0,riskLevel:'LOW',incidentDate:b.incidentDate?new Date(b.incidentDate):null}});return NextResponse.json(c,{status:201})}
