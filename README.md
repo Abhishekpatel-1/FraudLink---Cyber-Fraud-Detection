@@ -903,23 +903,11 @@ npm install
 
 ---
 
-## Configure Environment
 
-Create `.env`:
 
-```env
-DATABASE_URL="file:./dev.db"
+FraudLink's core investigation workflow with and without should work without an external AI service.
 
-NEXTAUTH_SECRET="change-this-secret"
 
-AI_API_KEY=""
-```
-
-`AI_API_KEY` is optional.
-
-FraudLink's core investigation workflow should work without an external AI service.
-
----
 
 ## Database Setup
 
